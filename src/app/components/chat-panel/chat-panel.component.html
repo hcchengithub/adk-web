@@ -338,7 +338,7 @@
         cdkAutosizeMaxRows="10"
         [ngModel]="userInput"
         (ngModelChange)="userInputChange.emit($event)"
-        (keydown.enter)="sendMessage.emit($event)"
+        (keydown)="onInputKeydown($event)"
         [placeholder]="i18n.typeMessagePlaceholder"
       ></textarea>
       <div class="chat-input-actions">

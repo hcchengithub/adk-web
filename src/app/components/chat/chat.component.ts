@@ -189,6 +189,10 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
   userInput: string = '';
   userEditEvalCaseMessage: string = '';
   userId = 'user';
+  // Input history for arrow key navigation
+  inputHistory: string[] = [];
+  historyIndex: number = -1;
+  currentTypedInput: string = '';
   appName = '';
   sessionId = ``;
   evalCase: EvalCase|null = null;
@@ -459,6 +463,13 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // Add user message
     if (!!this.userInput.trim()) {
+      // Save to input history
+      if (this.userInput.trim()) {
+        this.inputHistory.push(this.userInput);
+        this.historyIndex = this.inputHistory.length;
+        this.currentTypedInput = '';
+      }
+
       this.messages.update(
           (messages) =>
               [...messages,
@@ -540,6 +551,38 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
     // Clear input
     this.userInput = '';
     this.changeDetectorRef.detectChanges();
+  }
+
+  handleInputKeydown(event: KeyboardEvent) {
+    // Handle arrow up/down for input history navigation
+    if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      if (this.inputHistory.length === 0) return;
+
+      // Save current typed input if we're at the bottom of history
+      if (this.historyIndex === this.inputHistory.length) {
+        this.currentTypedInput = this.userInput;
+        this.historyIndex--;
+      } else if (this.historyIndex > 0) {
+        // Navigate up in history
+        this.historyIndex--;
+      }
+
+      this.userInput = this.inputHistory[this.historyIndex];
+    } else if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      if (this.inputHistory.length === 0) return;
+
+      // Navigate down in history
+      if (this.historyIndex < this.inputHistory.length - 1) {
+        this.historyIndex++;
+        this.userInput = this.inputHistory[this.historyIndex];
+      } else if (this.historyIndex === this.inputHistory.length - 1) {
+        // Reached the bottom, restore current typed input
+        this.historyIndex = this.inputHistory.length;
+        this.userInput = this.currentTypedInput;
+      }
+    }
   }
 
   private processErrorMessage(chunkJson: any) {

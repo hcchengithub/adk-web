@@ -107,6 +107,7 @@ export class ChatPanelComponent implements OnChanges, AfterViewInit {
   @Output() readonly updateState = new EventEmitter<void>();
   @Output() readonly toggleAudioRecording = new EventEmitter<void>();
   @Output() readonly toggleVideoRecording = new EventEmitter<void>();
+  @Output() readonly inputKeydown = new EventEmitter<KeyboardEvent>();
 
   @ViewChild('videoContainer', {read: ElementRef}) videoContainer!: ElementRef;
   @ViewChild('autoScroll') scrollContainer!: ElementRef;
@@ -153,6 +154,15 @@ export class ChatPanelComponent implements OnChanges, AfterViewInit {
         this.scrollToBottom();
       }
       this.previousMessageCount = this.messages.length;
+    }
+  }
+
+  onInputKeydown(event: KeyboardEvent) {
+    // Emit to parent for arrow key handling
+    this.inputKeydown.emit(event);
+    // Handle Enter key for sending message (but allow Shift+Enter for new line)
+    if (event.key === 'Enter' && !event.shiftKey) {
+      this.sendMessage.emit(event);
     }
   }
 
