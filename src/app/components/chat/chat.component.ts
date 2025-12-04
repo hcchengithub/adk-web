@@ -554,6 +554,20 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   handleInputKeydown(event: KeyboardEvent) {
+    // Handle Escape key to clear input
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      this.userInput = '';
+      this.historyIndex = this.inputHistory.length;
+      this.currentTypedInput = '';
+      return;
+    }
+
+    // Don't handle arrow keys if shift is pressed (allow text selection)
+    if (event.shiftKey) {
+      return;
+    }
+
     // Handle arrow up/down for input history navigation
     if (event.key === 'ArrowUp') {
       event.preventDefault();
