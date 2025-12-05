@@ -563,13 +563,9 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    // Don't handle arrow keys if shift is pressed (allow text selection)
-    if (event.shiftKey) {
-      return;
-    }
-
-    // Handle arrow up/down for input history navigation
-    if (event.key === 'ArrowUp') {
+    // Handle Ctrl+ArrowUp/Down for input history navigation
+    // Only trigger when Ctrl is pressed to avoid conflicts with multi-line editing
+    if (event.ctrlKey && event.key === 'ArrowUp') {
       event.preventDefault();
       if (this.inputHistory.length === 0) return;
 
@@ -583,7 +579,7 @@ export class ChatComponent implements OnInit, AfterViewInit, OnDestroy {
       }
 
       this.userInput = this.inputHistory[this.historyIndex];
-    } else if (event.key === 'ArrowDown') {
+    } else if (event.ctrlKey && event.key === 'ArrowDown') {
       event.preventDefault();
       if (this.inputHistory.length === 0) return;
 
