@@ -1,15 +1,28 @@
-# start-adk-web.ps1 - the customized ADK web server 
+# start-adk-web.ps1 - the customized ADK web server
 
 # Set the console window title
 $host.ui.RawUI.WindowTitle = "ADK Web 4200"
 
-# Activate the virtual environment for ChatLKK
-Set-Location -Path "$env:USERPROFILE\venvs\adks"
+# Determine paths based on computer name
+$computerName = $env:COMPUTERNAME
+if ($computerName -eq "TPEA90107673") {
+    # LBB2
+    $venvPath = "$env:USERPROFILE\venvs\adks"
+    $adkWebDir = "$env:USERPROFILE\Documents\GitHub\adk-web"
+} elseif ($computerName -eq "TPEA90169344") {
+    # LCH3
+    $venvPath = "D:\uv\venvs\adks"
+    $adkWebDir = "D:\GitHub\adk-web"
+} else {
+    Write-Host "Unknown computer: $computerName. Please configure paths for this machine."
+    exit 1
+}
+
 # Activate the virtual environment
+Set-Location -Path $venvPath
 & .\Scripts\Activate.ps1
 
-# Define the directory for the ADK web project and the backend URL
-$adkWebDir = "$env:USERPROFILE\Documents\GitHub\adk-web"
+# Define the backend URL
 $backendUrl = "http://localhost:8000"
 
 # Check if the ADK web directory exists
